@@ -25,16 +25,25 @@ Feedback, comments and pull requests appreciated.
 
 ## Quick start
 
-Echonix.py requires a functioning Python 3 distribution and should work
+Echonix requires a functioning Python 3 distribution and should work
 on Windows, Mac OS X or Linux.
 
 The Anaconda Python 3 distribution is recommended and includes
 the Spyder integrated development environment which newcomers should
 find easy to use and not unlike MATLAB.
 
-Download Echonix.py and install in a suitable directory on your
-system. Ensure that the Echonix.py directory is in your path (For
-Spyder, goto Tools -> PYTHONPATH manager).
+Download Echonix and install in a suitable directory on your
+system. Ensure that the Echonix top level directory is in your path
+(For Spyder, goto Tools -> PYTHONPATH manager).
+
+If you intend working on Echonix and submitting patches then you
+probably want to clone the the git repo and install it like this:
+
+```shell
+git clone https://github.com/RobBlackwell/echonix.git
+cd echonix
+pip install -e .
+```
 
 ## Simple example
 
@@ -43,7 +52,7 @@ plot an echogram:
 
 ```Python
 from echonix import ek60, echogram
-filename = r'C:\data\yourfile.raw'
+filename = r'data/ek60/krill_swarm_20091215/JR230-D20091215-T121917.raw'
 frequency = 38000
 a, r = ek60.raw_to_sv(filename, frequency)
 echogram.show(a, range=r)
@@ -59,7 +68,7 @@ from the configuration header.
 
 ```Python
 from echonix import raw
-filename = r'C:\data\yourfile.raw'
+filename = r'data/ek60/krill_swarm_20091215/JR230-D20091215-T121917.raw'
 d = raw.load_raw(filename)
 print(d[0].configurationheader.surveyname)
 ```
