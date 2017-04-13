@@ -1,6 +1,4 @@
-<div align="center">
-  <img src="https://github.com/robblackwell/echonix.py/blob/master/doc/logo.png">
-</div>
+![Echonix logo](https://github.com/RobBlackwell/echonix/blob/master/doc/logo.png)
 
 Hydroacoustic data analysis library for Python with support for EK60
 echo sounder data in RAW format.
@@ -51,7 +49,7 @@ a, r = ek60.raw_to_sv(filename, frequency)
 echogram.show(a, range=r)
 ```
 
-<img src="https://github.com/robblackwell/echonix.py/blob/master/doc/echogram.png">
+![Echogram](https://github.com/RobBlackwell/echonix/blob/master/doc/echogram.png)
 
 ## Access to datagrams
 
