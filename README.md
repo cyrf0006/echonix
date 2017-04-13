@@ -45,7 +45,7 @@ cd echonix
 pip install -e .
 ```
 
-## Simple example
+## Example 1
 
 Convert an EK60 raw file to a NumPy array of volume backscatter and
 plot an echogram:
@@ -60,11 +60,11 @@ echogram.show(a, range=r)
 
 ![Echogram](https://github.com/RobBlackwell/echonix/blob/master/doc/echogram.png)
 
-## Access to datagrams
+## Example 2
 
-The following example loads all tha datagrams from an EK60 RAW file,
-creates a list d of datagrams (named tuples) and prints the surveyname
-from the configuration header.
+Loads all the datagrams from an EK60 RAW file, creates a list of
+datagrams (named tuples) and prints the surveyname from the
+configuration header.
 
 ```Python
 from echonix import raw
