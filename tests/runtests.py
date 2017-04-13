@@ -29,7 +29,7 @@ assert math.isclose(ek60.volume_backscatter(pr, f, G, phi, cv, t, alpha, pt,
 
 # Test 2 - Read RAW datagrams
 
-datagrams = raw.load_raw('data/ek60/jr16003/ek60-sample.raw')
+datagrams = raw.load_raw('../data/ek60/jr16003/ek60-sample.raw')
 
 assert datagrams[0].dgheader.datagramtype == "CON0"
 assert datagrams[0].configurationheader.surveyname == "JR16003_"
@@ -41,5 +41,10 @@ assert len(datagrams) == 4693
 
 # Test 3 - Compute volume backscatter and plot echogram
 
-m, r = ek60.raw_to_sv('data/ek60/jr16003/ek60-sample.raw', 38000)
+m, r = ek60.raw_to_sv('../data/ek60/jr16003/ek60-sample.raw', 38000)
 echogram.show(m, range=r)
+
+# Test 4 - Load an EK80 file
+
+datagrams = raw.load_raw('../data/ek80/EK80_Example_Data_01/EK80_SimradEcho_WC381_Sequential-D20150513-T090935.raw')
+assert len(datagrams) == 461
