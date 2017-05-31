@@ -5,6 +5,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import numpy as np
+import numpy.ma as ma
 import math
 
 
@@ -30,17 +31,29 @@ EK500 color table
     return rgb
 
 
-def show(a, min=-90, max=-30, range=None, title='Echogram'):
+def show(a, min=None, max=None, range=None, title='Echogram', cbar_label=None):
     """Draws an echogram using the NumPy ndarray a.
 
     """
     x, y = a.shape
     a = np.transpose(a)
-    a[a < min] = min
-    a[a > max] = max
+
+    if min is not None:
+        a[a < min] =  np.nan
+
+    if max is not None:
+        a[a > max] =  np.nan
+
+    a = ma.array(a,mask=np.isnan(a))
+
     colormap = colors.ListedColormap(ek500(), "A")
     plt.pcolormesh(a, cmap=colormap)
-    plt.colorbar()
+
+    cbar = plt.colorbar()
+
+    if cbar_label is not None:
+        cbar.set_label(cbar_label, rotation=90)
+
     plt.gca().invert_yaxis()
 
     if range is None:
@@ -50,11 +63,11 @@ def show(a, min=-90, max=-30, range=None, title='Echogram'):
     stepy = y * stepr / range
 
     yticks = np.arange(0, y, stepy)
-    yticklabels = np.arange(0, range, stepr)
+    yticklabels = np.arange(0, range, stepr).astype(int)
 
     if len(yticks) < 3:
         yticks = np.arange(0, y, stepy/5)
-        yticklabels = np.arange(0, range, stepr/5)
+        yticklabels = np.arange(0, range, stepr/5).astype(int)
 
     plt.gca().set_yticks(yticks)
     plt.gca().set_yticklabels(yticklabels)

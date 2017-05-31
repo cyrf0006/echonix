@@ -55,7 +55,7 @@ from echonix import ek60, echogram
 filename = r'data/ek60/krill_swarm_20091215/JR230-D20091215-T121917.raw'
 frequency = 38000
 a, r = ek60.raw_to_sv(filename, frequency)
-echogram.show(a, range=r)
+echogram.show(a, range=r, min=-90, max=-30)
 ```
 
 ![Echogram](https://github.com/RobBlackwell/echonix/blob/master/doc/echogram.png)
