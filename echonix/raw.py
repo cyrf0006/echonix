@@ -160,7 +160,8 @@ def filetime_to_python_datetime(filetime):
     """Converts a filetime to a Python datetime. NB loss of fidelity.
 
     """
-    epoch = datetime.datetime(1601, 1, 1, 0, 0, 0, 0)
+    epoch = datetime.datetime(1601, 1, 1, 0, 0, 0, 0,
+                              tzinfo=datetime.timezone.utc)
     m = filetime / 10
     return epoch + datetime.timedelta(microseconds=m)
 
@@ -170,7 +171,8 @@ def python_datetime_to_filetime(d):
 nanosecond intervals since January 1, 1601.
 
     """
-    epoch = datetime.datetime(1601, 1, 1, 0, 0, 0, 0)
+    epoch = datetime.datetime(1601, 1, 1, 0, 0, 0, 0,
+                              tzinfo=datetime.timezone.utc)
     d = d - epoch
     filetime = (d.days * 24 * 60 * 60 * 1000000 +
                 d.seconds * 1000000 + d.microseconds) * 10
