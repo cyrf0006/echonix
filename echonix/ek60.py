@@ -101,14 +101,17 @@ def datagram_volume_backscatter(datagram, config):
 
     pr = datagram.powerdb
 
-    rangeCorrected = [(x+1)*dR for x in range(len(pr))]
+    #rangeCorrected = [(x+1)*dR for x in range(len(pr))]
 
     # See Echoview documentation http://bit.ly/2pqzS2D for information
     # on range correction
 
-    tvgCFac = 2
+    #tvgCFac = 2
 
-    rangeCorrected = [max(0, x - tvgCFac * dR) for x in rangeCorrected]
+    #rangeCorrected = [max(0, x - tvgCFac * dR) for x in rangeCorrected]
+
+    s = 2 # s is the TvgRangeCorrectionOffset
+    rangeCorrected = [max(0, (i + 1) * dR - s * dR) for i in range(len(pr))]
 
     sv = np.zeros(len(pr))
 
@@ -116,5 +119,6 @@ def datagram_volume_backscatter(datagram, config):
         sv[i] = volume_backscatter(pr[i], f, G, phi, cv, t, alpha,
                                    pt, tau, Sac, rangeCorrected[i])
 
-    total_range = len(pr) * dR
+    #total_range = len(pr) * dR
+    total_range = rangeCorrected[len(pr)-1]
     return sv, total_range
