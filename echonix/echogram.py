@@ -31,7 +31,7 @@ EK500 color table
     return rgb
 
 
-def show(a, min=None, max=None, range=None, title='Echogram', cbar_label=None):
+def show(a, min=None, max=None, range=None, title='Echogram', cbar=True, cbar_label=None, show=True):
     """Draws an echogram using the NumPy ndarray a.
 
     """
@@ -39,40 +39,54 @@ def show(a, min=None, max=None, range=None, title='Echogram', cbar_label=None):
     a = np.transpose(a)
 
     if min is not None:
-        a[a < min] =  np.nan
+        a[a < min] = np.nan
 
     if max is not None:
-        a[a > max] =  np.nan
+        a[a > max] = np.nan
 
-    a = ma.array(a,mask=np.isnan(a))
+    a = ma.array(a, mask=np.isnan(a))
 
     colormap = colors.ListedColormap(ek500(), "A")
     plt.pcolormesh(a, cmap=colormap)
 
-    cbar = plt.colorbar()
+    if cbar:
+        cbar = plt.colorbar()
 
-    if cbar_label is not None:
-        cbar.set_label(cbar_label, rotation=90)
+        if cbar_label is not None:
+            cbar.set_label(cbar_label, rotation=90)
 
     plt.gca().invert_yaxis()
 
-    if range is None:
-        range = y
+    ylabel = "Range / m"
 
-    stepr = 10**(int(math.log10(range)))
-    stepy = y * stepr / range
+
+    if range is None:
+        ylabel = "Bin number"
+        #range = y
+        top = 0
+        bottom = y
+    elif isinstance(range, tuple):
+        top, bottom = range
+    else:
+        top = 0
+        bottom = range
+
+    stepr = 10**(int(math.log10(bottom-top)))
+    stepy = y * stepr / (bottom-top)
 
     yticks = np.arange(0, y, stepy)
-    yticklabels = np.arange(0, range, stepr).astype(int)
+    yticklabels = np.arange(top, bottom, stepr).astype(int)
 
     if len(yticks) < 3:
         yticks = np.arange(0, y, stepy/5)
-        yticklabels = np.arange(0, range, stepr/5).astype(int)
+        yticklabels = np.arange(top, bottom, stepr/5).astype(int)
 
     plt.gca().set_yticks(yticks)
     plt.gca().set_yticklabels(yticklabels)
 
     plt.title(title)
     plt.xlabel("Sample")
-    plt.ylabel("Range / m")
-    plt.show()
+    plt.ylabel(ylabel)
+
+    if show:
+        plt.show()
