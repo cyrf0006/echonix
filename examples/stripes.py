@@ -3,9 +3,6 @@
 from echonix import ek60, echogram
 from numpy import genfromtxt
 
-
-# Displays an echogram of an interesting krill swarm at 38kHz
-
 filename = r'../data/tests/stripes.csv'
 a = genfromtxt(filename, delimiter=',')
 
