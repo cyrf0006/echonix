@@ -8,6 +8,7 @@ import numpy as np
 import numpy.ma as ma
 import math
 
+# TODO clean up and refactor show and show_image
 
 def ek500():
     """ek500 - return a 13x3 array of RGB values representing the Simrad
@@ -31,7 +32,8 @@ EK500 color table
     return rgb
 
 
-def show(a, min=None, max=None, range=None, title='Echogram', cbar=True, cbar_label=None, show=True):
+def show(a, min=None, max=None, range=None, title='Echogram', cbar=True,
+         cbar_label=None, xlabel=None,  ylabel=None, show=True):
     """Draws an echogram using the NumPy ndarray a.
 
     """
@@ -57,11 +59,9 @@ def show(a, min=None, max=None, range=None, title='Echogram', cbar=True, cbar_la
 
     plt.gca().invert_yaxis()
 
-    ylabel = "Range / m"
-
-
     if range is None:
-        ylabel = "Bin number"
+        if ylabel is None:
+            ylabel = "Bin number"
         #range = y
         top = 0
         bottom = y
@@ -70,6 +70,12 @@ def show(a, min=None, max=None, range=None, title='Echogram', cbar=True, cbar_la
     else:
         top = 0
         bottom = range
+
+    if ylabel is None:
+        ylabel = "Range / m"
+
+    if xlabel is None:
+        xlabel = "Sample"
 
     stepr = 10**(int(math.log10(bottom-top)))
     stepy = y * stepr / (bottom-top)
@@ -85,8 +91,54 @@ def show(a, min=None, max=None, range=None, title='Echogram', cbar=True, cbar_la
     plt.gca().set_yticklabels(yticklabels)
 
     plt.title(title)
-    plt.xlabel("Sample")
+    plt.xlabel(xlabel)
     plt.ylabel(ylabel)
 
+    if show:
+        plt.show()
+
+
+def show_image(a, range=None, title='Echogram', xlabel=None, ylabel=None,
+               show=True):
+    """Draws an echogram like view of the pillow image a. Useful for
+displaying composite images.
+    """
+    x, y = a.size
+
+    if range is None:
+        if ylabel is None:
+            ylabel = "Bin number"
+        #range = y
+        top = 0
+        bottom = y
+    elif isinstance(range, tuple):
+        top, bottom = range
+    else:
+        top = 0
+        bottom = range
+
+    stepr = 10**(int(math.log10(bottom-top)))
+    stepy = y * stepr / (bottom-top)
+
+    if ylabel is None:
+         ylabel = "Range / m"
+
+    if xlabel is None:
+        xlabel = "Sample"
+
+    yticks = np.arange(0, y, stepy)
+    yticklabels = np.arange(top, bottom, stepr).astype(int)
+
+    if len(yticks) < 3:
+        yticks = np.arange(0, y, stepy/5)
+        yticklabels = np.arange(top, bottom, stepr/5).astype(int)
+
+    plt.gca().set_yticks(yticks)
+    plt.gca().set_yticklabels(yticklabels)
+
+    plt.imshow(a, aspect='auto')
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     if show:
         plt.show()
