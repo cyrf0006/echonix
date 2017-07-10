@@ -49,6 +49,9 @@ pip install -e .
 
 Look in the examples directory to get started.
 
+There is a Jupter notebook called Demo.ipynb that can be used for
+demonstration and tutorial purposes.
+
 ## Tools
 
 Some of the Python scripts turn out to be useful command line tools
