@@ -210,6 +210,22 @@ def datagram_python_datetime(datagram):
 DatagramHeader = namedtuple('DatagramHeader', ['datagramtype', 'datetime'])
 
 
+def read_datagram_header(stream, length):
+    """Reads a datagram of given length from stream, returning just the
+header.
+
+    """
+    headerlength = 12
+    datagramtype = read_chars(stream, 4)
+    datetime = read_datetime(stream)
+
+    dgheader = DatagramHeader(datagramtype, datetime)
+
+    n = length - headerlength
+    read_bytes(stream, n)
+    return dgheader
+
+
 def read_datagram(stream, length):
     """Reads and parses a datagram of given length from stream.
 

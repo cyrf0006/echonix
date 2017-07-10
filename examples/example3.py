@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import matplotlib.pyplot as plt
 from echonix import ek60, echogram, imaging
 
 # Displays a composite echogram
@@ -12,4 +13,11 @@ Sv200, r = ek60.raw_to_sv(filename, 200000)
 
 im = imaging.composite(Sv38, Sv120, Sv200, min = -95, max = -50)
 
-echogram.show_image(im, range=r, title='Antarctic krill swarm')
+echogram.imshow(im, range=r)
+
+plt.xlabel('Sample')
+plt.ylabel('Range /m')
+
+plt.title('Antarctic krill swarm')
+
+plt.show()

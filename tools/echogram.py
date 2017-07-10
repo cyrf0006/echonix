@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import sys
-from echonix import ek60
-from echonix import echogram
+import matplotlib.pyplot as plt
+from echonix import ek60, echogram
 
 # echogram FILE
 # Displays a rudimentary echogram of a raw file using matplotlib
@@ -21,7 +21,18 @@ def main():
     a, r = ek60.raw_to_sv(filename, frequency)
 
     title = "{} kHz echogram".format(frequency / 1000)
-    echogram.show(a, range=r, title=title)
+    echogram.egshow(a, range=r)
+
+    cbar = plt.colorbar()
+    cbar.set_label('Sv (dB)', rotation=90)
+
+    plt.xlabel('Sample')
+    plt.ylabel('Range /m')
+
+    plt.title(filename)
+
+    plt.show()
+
 
 
 if __name__ == "__main__":

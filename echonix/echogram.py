@@ -8,8 +8,6 @@ import numpy as np
 import numpy.ma as ma
 import math
 
-# TODO clean up and refactor show and show_image
-
 def ek500():
     """ek500 - return a 13x3 array of RGB values representing the Simrad
 EK500 color table
@@ -32,37 +30,29 @@ EK500 color table
     return rgb
 
 
-def show(a, min=None, max=None, range=None, title='Echogram', cbar=True,
-         cbar_label=None, xlabel=None,  ylabel=None, show=True):
+def egshow(a, min=None, max=None, range=None, cmap=None):
     """Draws an echogram using the NumPy ndarray a.
 
     """
     x, y = a.shape
     a = np.transpose(a)
 
-    if min is not None:
-        a[a < min] = np.nan
+    if min is None:
+        min = np.nanmin(a)
 
-    if max is not None:
-        a[a > max] = np.nan
+    if max is None:
+        max  = np.nanmax(a)
 
     a = ma.array(a, mask=np.isnan(a))
 
-    colormap = colors.ListedColormap(ek500(), "A")
-    plt.pcolormesh(a, cmap=colormap)
+    if cmap is None:
+        cmap = colors.ListedColormap(ek500(), "A")
 
-    if cbar:
-        cbar = plt.colorbar()
-
-        if cbar_label is not None:
-            cbar.set_label(cbar_label, rotation=90)
+    plt.pcolormesh(a, cmap=cmap, vmin = min, vmax = max)
 
     plt.gca().invert_yaxis()
 
     if range is None:
-        if ylabel is None:
-            ylabel = "Bin number"
-        #range = y
         top = 0
         bottom = y
     elif isinstance(range, tuple):
@@ -71,11 +61,6 @@ def show(a, min=None, max=None, range=None, title='Echogram', cbar=True,
         top = 0
         bottom = range
 
-    if ylabel is None:
-        ylabel = "Range / m"
-
-    if xlabel is None:
-        xlabel = "Sample"
 
     stepr = 10**(int(math.log10(bottom-top)))
     stepy = y * stepr / (bottom-top)
@@ -90,25 +75,17 @@ def show(a, min=None, max=None, range=None, title='Echogram', cbar=True,
     plt.gca().set_yticks(yticks)
     plt.gca().set_yticklabels(yticklabels)
 
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-
-    if show:
-        plt.show()
 
 
-def show_image(a, range=None, title='Echogram', xlabel=None, ylabel=None,
-               show=True):
+
+
+def imshow(a, range=None, aspect='auto'):
     """Draws an echogram like view of the pillow image a. Useful for
 displaying composite images.
     """
     x, y = a.size
 
     if range is None:
-        if ylabel is None:
-            ylabel = "Bin number"
-        #range = y
         top = 0
         bottom = y
     elif isinstance(range, tuple):
@@ -120,12 +97,6 @@ displaying composite images.
     stepr = 10**(int(math.log10(bottom-top)))
     stepy = y * stepr / (bottom-top)
 
-    if ylabel is None:
-         ylabel = "Range / m"
-
-    if xlabel is None:
-        xlabel = "Sample"
-
     yticks = np.arange(0, y, stepy)
     yticklabels = np.arange(top, bottom, stepr).astype(int)
 
@@ -136,9 +107,5 @@ displaying composite images.
     plt.gca().set_yticks(yticks)
     plt.gca().set_yticklabels(yticklabels)
 
-    plt.imshow(a, aspect='auto')
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    if show:
-        plt.show()
+    plt.imshow(a, aspect=aspect)
+

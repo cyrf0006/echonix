@@ -45,56 +45,15 @@ cd echonix
 pip install -e .
 ```
 
-## Example 1
+## Examples
 
-Convert an EK60 raw file to a NumPy array of volume backscatter and
-plot an echogram:
-
-```Python
-from echonix import ek60, echogram
-filename = r'data/ek60/krill_swarm_20091215/JR230-D20091215-T121917.raw'
-frequency = 38000
-a, r = ek60.raw_to_sv(filename, frequency)
-echogram.show(a, range=r, min=-90, max=-30)
-```
-
-![Echogram](https://github.com/RobBlackwell/echonix/blob/master/doc/echogram.png)
-
-## Example 2
-
-Loads all the datagrams from an EK60 RAW file, creates a list of
-datagrams (named tuples) and prints the surveyname from the
-configuration header.
-
-```Python
-from echonix import raw
-filename = r'data/ek60/krill_swarm_20091215/JR230-D20091215-T121917.raw'
-d = raw.load_raw(filename)
-print(d[0].configurationheader.surveyname)
-```
-
-## More examples
-
-For more examples and code snippets, see the examples subdirectory.
+Look in the examples directory to get started.
 
 ## Tools
 
 Some of the Python scripts turn out to be useful command line tools
 that can be run from a Unix shell. These are in the tools directory
 can can can be symlinked from you bin directory.
-
-`rawcat` shows a textual representation of a RAW file, `echogram`
-draws an echogram. `rawrepair` attempts to recover datagrams from a
-corrupted raw file etc.
-
-
-```shell
-rawcat myfile.raw
-rawinfo myfile.raw
-rawnmea myfile.raw
-rawrepair myfile.raw
-echogram myfile.raw
-```
 
 ## References
 
