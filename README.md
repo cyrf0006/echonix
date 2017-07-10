@@ -23,7 +23,7 @@ versions is not guaranteed.__
 Feedback, comments and pull requests appreciated.
 
 
-## Quick start
+## Installation
 
 Echonix requires a functioning Python 3 distribution and should work
 on Windows, Mac OS X or Linux.
@@ -45,18 +45,12 @@ cd echonix
 pip install -e .
 ```
 
-## Examples
+## Getting started
 
-Look in the examples directory to get started.
-
-There is a Jupter notebook called Demo.ipynb that can be used for
-demonstration and tutorial purposes.
-
-## Tools
-
-Some of the Python scripts turn out to be useful command line tools
-that can be run from a Unix shell. These are in the tools directory
-can can can be symlinked from you bin directory.
+See the
+demonstration
+[Jupyter notebook](https://github.com/RobBlackwell/echonix/blob/master/examples/Demo.ipynb) and
+example scripts in the examples directory.
 
 ## References
 
