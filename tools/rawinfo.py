@@ -4,13 +4,17 @@ import sys
 import xml.etree.ElementTree as ET
 from echonix import raw
 
-# rawinfo [FILE]
-# displays basic metadata about a Simrad RASEW file.
+# rawinfo.py [FILE]...
+# Displays basic metadata about a Simrad RAW file.
 
-def head(filename):
+def info(filename):
+
     with open(filename, "rb") as f:
+        print("filename: {}".format(filename))
 
         datagram = raw.read_encapsulated_datagram(f, raw.read_datagram)
+
+        start = raw.filetime(datagram.dgheader.datetime)
 
         dt = raw.datagram_python_datetime(datagram)
         if datagram.dgheader.datagramtype == 'XML0':
@@ -28,17 +32,24 @@ def head(filename):
 
         n = 1
         while True:
-            datagram = raw.read_encapsulated_datagram(f, raw.read_datagram)
-            if not datagram:
+
+            dgheader = raw.read_encapsulated_datagram(f,
+                                                      raw.read_datagram_header)
+
+            if not dgheader:
                 break
+
             n += 1
+            end = raw.filetime(dgheader.datetime)
 
         print("datagrams: {}".format(n))
+        print("start-filetime: {}".format(start))
+        print("end-filetime: {}".format(end))
 
 
 def main():
     for filename in sys.argv[1:]:
-        head(filename)
+        info(filename)
 
 
 if __name__ == "__main__":
