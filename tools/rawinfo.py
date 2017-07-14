@@ -43,8 +43,8 @@ def info(filename):
             end = raw.filetime(dgheader.datetime)
 
         print("datagrams: {}".format(n))
-        print("start-filetime: {}".format(start))
-        print("end-filetime: {}".format(end))
+        print("start: {}".format(start))
+        print("end: {}".format(end))
 
 
 def main():
