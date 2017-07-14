@@ -45,8 +45,10 @@ def main():
     else:
         filenames = sys.stdin
 
-    lst = []
+
     for filename in filenames:
+
+        lst = []
 
         filename = filename.rstrip()
         regions = evr.load_evr(filename)
