@@ -7,9 +7,48 @@ import numpy as np
 from echonix import raw
 
 
-def raws_to_sv(filenames, frequency):
+def raws_to_sv_with_angles(filenames, frequency, start=None, end=None):
     """Given a list of filenames designating EK60 RAW files, read those
-    RAW files and return a NumPy ndarray of volume backscatter whose
+    RAW files and return an of volume backscatter whose rows represent
+    pings. The alongships angles, athwartships angles and the range in
+    metres are also returned.
+
+    """
+    config = None
+    pings = []
+    athwartships = []
+    alongships = []
+    r = None
+    for filename in filenames:
+        with open(filename, "rb") as f:
+            while True:
+                datagram = raw.read_encapsulated_datagram(f, raw.read_datagram)
+                if not datagram:
+                    break
+
+                if datagram.dgheader.datagramtype == 'CON0':
+                    config = datagram
+                elif datagram.dgheader.datagramtype == 'RAW0' \
+                        and datagram.frequency == frequency:
+
+                    filetime = raw.datagram_filetime(datagram)
+
+                    if ((start is None) or (filetime >= start)) \
+                        and ((end is None) or (filetime <= end)):
+
+                        ping, r = datagram_volume_backscatter(datagram, config)
+                        pings.append(ping)
+                        athwartships.append(datagram.athwartship)
+                        alongships.append(datagram.alongship)
+
+    return np.array(pings, dtype=np.float64), np.array(alongships, dtype=np.float64), np.array(athwartships, dtype=np.float64), r
+
+
+
+
+def raws_to_sv(filenames, frequency, start=None, end=None):
+    """Given a list of filenames designating EK60 RAW files, read those
+    RAW files and return an array of volume backscatter whose
     rows represent pings.  The range in metres is also returned.
 
     """
@@ -27,18 +66,34 @@ def raws_to_sv(filenames, frequency):
                     config = datagram
                 elif datagram.dgheader.datagramtype == 'RAW0' \
                         and datagram.frequency == frequency:
-                    ping, r = datagram_volume_backscatter(datagram, config)
-                    pings.append(ping)
+
+                    filetime = raw.datagram_filetime(datagram)
+
+                    if ((start is None) or (filetime >= start)) \
+                        and ((end is None) or (filetime <= end)):
+
+                        ping, r = datagram_volume_backscatter(datagram, config)
+                        pings.append(ping)
+
     return np.array(pings), r
 
 
-def raw_to_sv(filename, frequency):
-    """Given a filename designating EK60 RAW files, read the file and
-    return a NumPy ndarray of volume backscatter whose rows represent
+def raw_to_sv(filename, frequency, start=None, end=None):
+    """Given a filename designating an EK60 RAW file, read the file and
+    return an array of volume backscatter whose rows represent
     pings. The range in metres is also returned.
 
     """
-    return raws_to_sv([filename], frequency)
+    return raws_to_sv([filename], frequency, start, end)
+
+def raw_to_sv_with_angles(filename, frequency, start=None, end=None):
+    """Given a filename designating an EK60 RAW file, read the file and
+    return an array of volume backscatter whose rows represent
+    pings. The alongships angles, athwartships angles and the range in
+    metres are also returned.
+
+    """
+    return raws_to_sv_with_angles([filename], frequency, start, end)
 
 
 def mylog10(x):
@@ -114,7 +169,10 @@ def datagram_volume_backscatter(datagram, config):
     rangeCorrected = [max(0, (i + 1) * dR - s * dR) for i in range(len(pr))]
 
     sv = np.zeros(len(pr))
+    #sv = [0] * len(pr)
 
+    # TODO - Can this be vectorised?
+    
     for i in range(len(pr)):
         sv[i] = volume_backscatter(pr[i], f, G, phi, cv, t, alpha,
                                    pt, tau, Sac, rangeCorrected[i])
