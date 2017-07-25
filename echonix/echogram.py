@@ -43,7 +43,8 @@ def egshow(a, min=None, max=None, range=None, cmap=None):
     if max is None:
         max  = np.nanmax(a)
 
-    a = ma.array(a, mask=np.isnan(a))
+    if not np.ma.is_masked(a) and np.isnan(a).any():
+        a = ma.array(a, mask=np.isnan(a))
 
     if cmap is None:
         cmap = colors.ListedColormap(ek500(), "A")
