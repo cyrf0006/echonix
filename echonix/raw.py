@@ -426,7 +426,17 @@ SampleDatagram0 = namedtuple('SampleDatagram0', ['dgheader',
                                                  'count',
                                                  'power',
                                                  'powerdb',
-                                                 'angle'])
+                                                 'angle',
+                                                 'alongship',
+                                                 'athwartship'])
+
+
+def twos_complement(x):
+    """Given an 8 bit byte, returns a number between -128 and 127."""
+    if (x & 0x80):
+        return (x & 0x7f) - 128
+    else:
+        return (x & 0x7f)
 
 
 def read_sample_binary_datagram0(stream, dgheader):
@@ -458,15 +468,20 @@ def read_sample_binary_datagram0(stream, dgheader):
     offset = read_long(stream)  # First sample
     count = read_long(stream)  # Number of samples
     power = read_shorts(stream, count)  # Compressed format - See Remark 1!
-    powerdb = [x * (10 * math.log10(2) / 256) for x in power]
+    c = (10 * math.log10(2) / 256)
+    powerdb = [x * c for x in power]
     angle = read_shorts(stream, count)  # See Remark 2 below!
+    c = 180 /128
+
+    athwartship  = [twos_complement(x & 0xff) * c for x in angle]
+    alongship  = [twos_complement((x & 0xff00) >>8) * c for x in angle]
 
     return SampleDatagram0(dgheader, channel, mode, transducerdepth,
                            frequency, transmitpower, pulselength, bandwidth,
                            sampleinterval, soundvelocity,
                            absorptioncoefficient, heave, txroll, txpitch,
                            temperature, rxroll, rxpitch, offset, count,
-                           power, powerdb, angle)
+                           power, powerdb, angle, alongship, athwartship)
 
 
 # An EK60 configuration datagram consists of a ConfigurationHeader and
